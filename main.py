@@ -715,3 +715,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Main()
     sys.exit(app.exec())
+
+#коммит, если что
