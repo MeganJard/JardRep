@@ -488,7 +488,7 @@ class Calend(MainWindows, QMainWindow):
         print(id)
 
         db = str(sqlite3.connect('Database.db').cursor().execute(f"SELECT text FROM sobit WHERE id = '{id}'").fetchall())
-
+        print(self.listView.currentItem().text().split()[-1], ' '.join(self.listView.currentItem().text().split()[:-1]), db, self)
         self.sobLOok = SobLook(self.listView.currentItem().text().split()[-1], ' '.join(self.listView.currentItem().text().split()[:-1]), db, self)
         self.sobLOok.show()
 
