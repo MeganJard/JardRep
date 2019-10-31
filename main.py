@@ -414,6 +414,7 @@ class Calend(MainWindows, QMainWindow):
         Calender.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(Calender)
         self.centralwidget.setObjectName("centralwidget")
+
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(290, 10, 441, 51))
         font = QtGui.QFont()
@@ -426,6 +427,7 @@ class Calend(MainWindows, QMainWindow):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(480, 440, 311, 91))
         font = QtGui.QFont()
+        self.calendarWidget
         font.setPointSize(24)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
@@ -438,6 +440,7 @@ class Calend(MainWindows, QMainWindow):
         self.listView = QtWidgets.QListWidget(self.centralwidget)
         self.listView.setGeometry(QtCore.QRect(10, 70, 431, 461))
         self.listView.setObjectName("listView")
+        self.listView.setFont(font)
         Calender.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Calender)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -473,7 +476,8 @@ class Calend(MainWindows, QMainWindow):
         for i in range(len(val)):
             a1 = ''.join([str(j) for j in val1[i]])
             a2 = ''.join(val[i])
-            a = '                                '.join(
+            a = '                                                                                                    ' \
+                '  '.join(
                 [a2, a1])
             li.append(a)
         self.listView.addItems(li)
@@ -487,23 +491,24 @@ class Calend(MainWindows, QMainWindow):
         id = self.listView.currentItem().text().split()[-1]
         print(id)
 
-        db = str(sqlite3.connect('Database.db').cursor().execute(f"SELECT text FROM sobit WHERE id = '{id}'").fetchall())
-        print(self.listView.currentItem().text().split()[-1], ' '.join(self.listView.currentItem().text().split()[:-1]), db, self)
-        self.sobLOok = SobLook(self.listView.currentItem().text().split()[-1], ' '.join(self.listView.currentItem().text().split()[:-1]), db, self)
+        db = str(
+            sqlite3.connect('Database.db').cursor().execute(f"SELECT text FROM sobit WHERE id = '{id}'").fetchall())
+
+        self.sobLOok = SobLook(self.listView.currentItem().text().split()[-1],
+                               ' '.join(self.listView.currentItem().text().split()[:-1]), db)
         self.sobLOok.show()
 
 
-class SobLook(Calend, QMainWindow):
-    def __init__(self, id, title, text, rodit):
-        super(QMainWindow).__init__()
+class SobLook(QMainWindow):
+    def __init__(self, id, title, text):
+        super().__init__()
         self.id = id
         self.text = text
         self.title = title
-        self.rodit = rodit
         self.setupUi(self)
-        print(self.text)
         self.textEdit.setText(self.text.split("'")[1])
         self.textEdit_2.setText(''.join(self.title))
+        self.pushButton.clicked.connect(self.save)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -559,6 +564,14 @@ class SobLook(Calend, QMainWindow):
         self.label.setText(_translate("MainWindow", "Редактирование события"))
         self.pushButton.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_2.setText(_translate("MainWindow", "<<-- Назад"))
+
+    def save(self):
+        a = sqlite3.connect('Database.db')
+        a.cursor().execute(f'''UPDATE sobit
+    SET text = '{self.textEdit.toPlainText()}', name = '{self.textEdit_2.toPlainText()}'
+    WHERE id = {self.id}''')
+        a.commit()
+        self.close()
 
 
 class Busines(MainWindows, QMainWindow):
@@ -716,4 +729,4 @@ if __name__ == "__main__":
     window = Main()
     sys.exit(app.exec())
 
-#коммит, если что
+# коммит, если что
