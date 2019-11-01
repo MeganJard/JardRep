@@ -111,7 +111,7 @@ class MainWindows(QMainWindow):
         self.show()
 
 
-class BusCreate(MainWindows, QMainWindow):
+class BusCreate(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -259,20 +259,22 @@ class BusCreate(MainWindows, QMainWindow):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.pushButton.clicked.connect(self.hide)
+        self.pushButton.clicked.connect(self.close)
         self.commandLinkButton.clicked.connect(self.dialog)
 
     def dialog(self):
-        global DataBaseList
+
         DataBaseList = [self.textBrowser.toPlainText(), self.textBrowser_2.toPlainText(),
                         self.textBrowser_3.toPlainText(),
                         self.textBrowser_4.toPlainText(), self.textBrowser_5.toPlainText(),
                         self.textBrowser_6.toPlainText(), self.textBrowser_7.toPlainText(),
                         self.textBrowser_8.toPlainText(),
                         self.textBrowser_9.toPlainText()]
+        print(DataBaseList)
         print(DataBaseList[1])
-        if "" not in DataBaseList:
-            self.dial = BusCreateDialog()
+        if not '' in DataBaseList:
+
+            self.dial = BusCreateDialog(DataBaseList)
 
             self.dial.show()
 
@@ -294,8 +296,9 @@ class BusCreate(MainWindows, QMainWindow):
 
 
 class BusCreateDialog(QDialog):
-    def __init__(self):
+    def __init__(self, li):
         super().__init__()
+        self.li = li
         self.setupUi(self)
 
     def setupUi(self, Dialog):
@@ -321,20 +324,22 @@ class BusCreateDialog(QDialog):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def append(self):
+
         cn = sqlite3.connect('Database.db')
         cur = cn.cursor()
-        a = list(DataBaseList)
-        print(self.textEdit.toPlainText())
-        a.append(self.textEdit.toPlainText())
-        a.append(len(list(cur.execute('SELECT fio FROM clients').fetchall())))
-        print(a)
-        for i in range(len(a)):
-            a[i] = "'" + str(a[i]) + "'"
 
-        print(', '.join(a))
 
-        cur.execute('INSERT INTO clients VALUES(' + ', '.join(a) + ')')
+        self.li.append(self.textEdit.toPlainText())
+        self.li.append(len(list(cur.execute('SELECT fio FROM clients').fetchall())))
+        print(self.li)
+        for i in range(len(self.li)):
+            self.li[i] = "'" + str(self.li[i]) + "'"
+
+        print(', '.join(self.li))
+
+        cur.execute('INSERT INTO clients VALUES(' + ', '.join(self.li) + ')')
         cn.commit()
+        DataBaseList.clear()
         self.close()
 
     def retranslateUi(self, Dialog):
