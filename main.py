@@ -2,7 +2,7 @@ import sqlite3
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFormLayout, QGroupBox, QDialog, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
 flag1 = True
 flag2 = True
@@ -578,6 +578,7 @@ class Busines(MainWindows, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.scrollArea.doubleClicked.connect(self.redact)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -590,14 +591,9 @@ class Busines(MainWindows, QMainWindow):
         font.setPointSize(28)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
+        self.scrollArea = QtWidgets.QListWidget(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(10, 60, 781, 491))
-        self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 779, 489))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(10, 20, 121, 31))
         font = QtGui.QFont()
@@ -615,31 +611,233 @@ class Busines(MainWindows, QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.pushButton.clicked.connect(self.hide)
-        formLayout = QFormLayout()
-        groupBox = QGroupBox()
+
         comboList = []
 
         cn = sqlite3.connect('Database.db')
         cur = cn.cursor()
 
         val = len(list(cur.execute('SELECT fio FROM clients')))
-        print(val)
+
+        ids = list(cur.execute('SELECT id FROM clients'))
 
         li = list(cur.execute('SELECT nameBus FROM clients'))
-        print(li)
+
         for i in range(val):
-            a = QPushButton(str(li[i][0]))
-            a.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Bold))
+            a = str(li[i][
+                        0]) + '                                                                                         ' + str(
+                ids[i][0])
             comboList.append(a)
-            formLayout.addRow(comboList[i])
-        groupBox.setLayout(formLayout)
-        self.scrollArea.setWidget(groupBox)
+
+        self.scrollArea.addItems(comboList)
+
+    def redact(self):
+        a = self.scrollArea.currentItem().text().split()[-1]
+        self.buslook = BusLook(a)
+        self.buslook.show()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Мои дела"))
         self.pushButton.setText(_translate("MainWindow", "<<-- Назад"))
+
+
+class BusLook(QMainWindow):
+    def __init__(self, id):
+        super().__init__()
+        self.id = id
+        self.setupUi(self)
+        self.pols = [self.textEdit_11, self.textEdit_12, self.textEdit_13, self.textEdit_14, self.textEdit_15,
+                     self.textEdit_16,
+                     self.textEdit_17,
+                     self.textEdit_18, self.textEdit_19, self.textEdit_20]
+        self.write()
+        self.pushButton.clicked.connect(self.setreadFalse)
+        self.pushButton_2.clicked.connect(self.save)
+        self.pushButton_3.clicked.connect(self.close)
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(578, 574)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(150, 10, 341, 51))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(140, 130, 241, 31))
+        self.label_3.setText("")
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(10, 130, 121, 31))
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(10, 170, 121, 31))
+        self.label_5.setObjectName("label_5")
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setGeometry(QtCore.QRect(10, 210, 121, 31))
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
+        self.label_7.setGeometry(QtCore.QRect(10, 250, 121, 31))
+        self.label_7.setObjectName("label_7")
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        self.label_8.setGeometry(QtCore.QRect(10, 290, 121, 31))
+        self.label_8.setObjectName("label_8")
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(10, 330, 121, 31))
+        self.label_9.setObjectName("label_9")
+        self.label_10 = QtWidgets.QLabel(self.centralwidget)
+        self.label_10.setGeometry(QtCore.QRect(10, 370, 121, 31))
+        self.label_10.setObjectName("label_10")
+        self.label_11 = QtWidgets.QLabel(self.centralwidget)
+        self.label_11.setGeometry(QtCore.QRect(10, 410, 121, 31))
+        self.label_11.setObjectName("label_11")
+        self.label_12 = QtWidgets.QLabel(self.centralwidget)
+        self.label_12.setGeometry(QtCore.QRect(10, 450, 121, 31))
+        self.label_12.setObjectName("label_12")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(130, 490, 261, 41))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(400, 490, 171, 41))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_2.setFont(font)
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(0, 50, 111, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.label_13 = QtWidgets.QLabel(self.centralwidget)
+        self.label_13.setGeometry(QtCore.QRect(10, 90, 121, 31))
+        self.label_13.setObjectName("label_13")
+        self.textEdit_11 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_11.setGeometry(QtCore.QRect(130, 90, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_11.setFont(font)
+        self.textEdit_11.setObjectName("textEdit_11")
+        self.textEdit_12 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_12.setGeometry(QtCore.QRect(130, 130, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_12.setFont(font)
+        self.textEdit_12.setObjectName("textEdit_12")
+        self.textEdit_13 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_13.setGeometry(QtCore.QRect(130, 170, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_13.setFont(font)
+        self.textEdit_13.setObjectName("textEdit_13")
+        self.textEdit_14 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_14.setGeometry(QtCore.QRect(130, 210, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_14.setFont(font)
+        self.textEdit_14.setObjectName("textEdit_14")
+        self.textEdit_15 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_15.setGeometry(QtCore.QRect(130, 250, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_15.setFont(font)
+        self.textEdit_15.setObjectName("textEdit_15")
+        self.textEdit_16 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_16.setGeometry(QtCore.QRect(130, 290, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_16.setFont(font)
+        self.textEdit_16.setObjectName("textEdit_16")
+        self.textEdit_17 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_17.setGeometry(QtCore.QRect(130, 330, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_17.setFont(font)
+        self.textEdit_17.setObjectName("textEdit_17")
+        self.textEdit_18 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_18.setGeometry(QtCore.QRect(130, 370, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_18.setFont(font)
+        self.textEdit_18.setObjectName("textEdit_18")
+        self.textEdit_19 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_19.setGeometry(QtCore.QRect(130, 410, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_19.setFont(font)
+        self.textEdit_19.setObjectName("textEdit_19")
+        self.textEdit_20 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_20.setGeometry(QtCore.QRect(130, 450, 261, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.textEdit_20.setFont(font)
+        self.textEdit_20.setObjectName("textEdit_20")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 578, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        db = sqlite3.connect('Database.db').cursor()
+        self.var = db.execute(
+            f'SELECT nameBus, fio, adess, place, inn, snils, telnumber, resogl, reorg, repkao FROM clients WHERE id = {self.id}').fetchall()[
+            0]
+        print(self.var[0])
+
+    def setreadFalse(self):
+        for i in self.pols:
+            i.setReadOnly(False)
+
+    def save(self):
+        li = ['nameBus', 'fio', 'adess', 'place', 'inn', 'snils', 'telnumber', 'resogl', 'reorg', 'repkao']
+        db = sqlite3.connect('Database.db')
+        db1 = db.cursor()
+        print()
+        for i in range(len(self.pols)):
+            db1.execute(f'''UPDATE clients 
+    SET {li[i]} = '{self.pols[i].toPlainText()}'
+    WHERE id={self.id}
+    ''')
+        db.commit()
+        self.close()
+
+
+    def write(self):
+        print(len(self.pols))
+
+        for i in range(len(self.pols)):
+            self.pols[i].setText(str(self.var[i]))
+            self.pols[i].setReadOnly(True)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "Просмотр дела "))
+        self.label_4.setText(_translate("MainWindow", "ФИО клиента"))
+        self.label_5.setText(_translate("MainWindow", "Адрес"))
+        self.label_6.setText(_translate("MainWindow", "Место рождения"))
+        self.label_7.setText(_translate("MainWindow", "ИНН"))
+        self.label_8.setText(_translate("MainWindow", "Снилс"))
+        self.label_9.setText(_translate("MainWindow", "Номер телефона"))
+        self.label_10.setText(_translate("MainWindow", "Реквизиты согл."))
+        self.label_11.setText(_translate("MainWindow", "Рекв. орг. адвоката"))
+        self.label_12.setText(_translate("MainWindow", "Рекв. квит. к ПКАО"))
+        self.pushButton.setText(_translate("MainWindow", "Редактировать"))
+        self.pushButton_2.setText(_translate("MainWindow", "Сохранить"))
+        self.pushButton_3.setText(_translate("MainWindow", "<<--Назад"))
+        self.label_13.setText(_translate("MainWindow", "Название"))
 
 
 class newSob(QMainWindow):
