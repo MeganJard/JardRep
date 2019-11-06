@@ -1,6 +1,6 @@
 import sqlite3
 import sys
-
+from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
@@ -115,7 +115,8 @@ class BusCreate(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
+        self.pushButton.clicked.connect(self.close)
+        self.commandLinkButton.clicked.connect(self.dialog)
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 645)
@@ -127,7 +128,7 @@ class BusCreate(QMainWindow):
         self.textBrowser = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(80, 70, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser.setFont(font)
         self.textBrowser.setObjectName("textBrowser")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -145,49 +146,49 @@ class BusCreate(QMainWindow):
         self.textBrowser_2 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_2.setGeometry(QtCore.QRect(80, 130, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_2.setFont(font)
         self.textBrowser_2.setObjectName("textBrowser_2")
         self.textBrowser_3 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_3.setGeometry(QtCore.QRect(80, 190, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_3.setFont(font)
         self.textBrowser_3.setObjectName("textBrowser_3")
         self.textBrowser_4 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_4.setGeometry(QtCore.QRect(80, 250, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_4.setFont(font)
         self.textBrowser_4.setObjectName("textBrowser_4")
         self.textBrowser_5 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_5.setGeometry(QtCore.QRect(80, 310, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_5.setFont(font)
         self.textBrowser_5.setObjectName("textBrowser_5")
         self.textBrowser_6 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_6.setGeometry(QtCore.QRect(80, 370, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_6.setFont(font)
         self.textBrowser_6.setObjectName("textBrowser_6")
         self.textBrowser_7 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_7.setGeometry(QtCore.QRect(80, 430, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_7.setFont(font)
         self.textBrowser_7.setObjectName("textBrowser_7")
         self.textBrowser_8 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_8.setGeometry(QtCore.QRect(80, 490, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_8.setFont(font)
         self.textBrowser_8.setObjectName("textBrowser_8")
         self.textBrowser_9 = QtWidgets.QTextEdit(self.centralwidget)
         self.textBrowser_9.setGeometry(QtCore.QRect(80, 550, 211, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.textBrowser_9.setFont(font)
         self.textBrowser_9.setObjectName("textBrowser_9")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
@@ -259,24 +260,24 @@ class BusCreate(QMainWindow):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.pushButton.clicked.connect(self.close)
-        self.commandLinkButton.clicked.connect(self.dialog)
+
 
     def dialog(self):
-
-        DataBaseList = [self.textBrowser.toPlainText(), self.textBrowser_2.toPlainText(),
-                        self.textBrowser_3.toPlainText(),
-                        self.textBrowser_4.toPlainText(), self.textBrowser_5.toPlainText(),
-                        self.textBrowser_6.toPlainText(), self.textBrowser_7.toPlainText(),
-                        self.textBrowser_8.toPlainText(),
-                        self.textBrowser_9.toPlainText()]
+        global DataBaseList
+        DataBaseList = [self.textBrowser, self.textBrowser_2,
+                        self.textBrowser_3,
+                        self.textBrowser_4, self.textBrowser_5,
+                        self.textBrowser_6, self.textBrowser_7,
+                        self.textBrowser_8,
+                        self.textBrowser_9]
         print(DataBaseList)
         print(DataBaseList[1])
         if not '' in DataBaseList:
-
-            self.dial = BusCreateDialog(DataBaseList)
-
+            self.dial = BusCreateDialog([i.toPlainText() for i in DataBaseList])
             self.dial.show()
+            for i in DataBaseList:
+                i.clear()
+            self.close()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -302,6 +303,8 @@ class BusCreateDialog(QDialog):
         self.setupUi(self)
 
     def setupUi(self, Dialog):
+        font = QtGui.QFont()
+        font.setPointSize(12)
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 158)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
@@ -312,10 +315,9 @@ class BusCreateDialog(QDialog):
         self.textEdit = QtWidgets.QTextEdit(Dialog)
         self.textEdit.setGeometry(QtCore.QRect(10, 50, 381, 41))
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.setFont(font)
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(20, 0, 301, 31))
-        font = QtGui.QFont()
-        font.setPointSize(11)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.retranslateUi(Dialog)
@@ -324,22 +326,20 @@ class BusCreateDialog(QDialog):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def append(self):
-
         cn = sqlite3.connect('Database.db')
         cur = cn.cursor()
 
-
         self.li.append(self.textEdit.toPlainText())
-        self.li.append(len(list(cur.execute('SELECT fio FROM clients').fetchall())))
         print(self.li)
         for i in range(len(self.li)):
             self.li[i] = "'" + str(self.li[i]) + "'"
 
         print(', '.join(self.li))
 
-        cur.execute('INSERT INTO clients VALUES(' + ', '.join(self.li) + ')')
+        cur.execute(
+            'INSERT INTO clients(fio, adess, place, inn, snils, telnumber, resogl, reorg, repkao, nameBus) VALUES(' + ', '.join(
+                self.li) + ')')
         cn.commit()
-        DataBaseList.clear()
         self.close()
 
     def retranslateUi(self, Dialog):
@@ -412,14 +412,24 @@ class Calend(MainWindows, QMainWindow):
         self.pushButton.clicked.connect(self.new_sob)
         self.updateBar()
         self.calendarWidget.selectionChanged.connect(self.updateBar)
-        self.listView.doubleClicked.connect(self.soblook)
+        self.listWidget.doubleClicked.connect(self.soblook)
+        self.pushButton_2.clicked.connect(self.close)
+        self.pushButton_3.clicked.connect(self.updateBar)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            col = sqlite3.connect('Database.db')
+            cur = col.cursor()
+            ids = self.listWidget.currentItem().text().split()[-1]
+            print(f'DELETE FROM sobit WHERE id == "{ids}"')
+            cur.execute(f'DELETE FROM sobit WHERE id == "{ids}"')
+            col.commit()
 
     def setupUi(self, Calender):
         Calender.setObjectName("Calender")
         Calender.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(Calender)
         self.centralwidget.setObjectName("centralwidget")
-
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(290, 10, 441, 51))
         font = QtGui.QFont()
@@ -427,12 +437,11 @@ class Calend(MainWindows, QMainWindow):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.calendarWidget = QtWidgets.QCalendarWidget(self.centralwidget)
-        self.calendarWidget.setGeometry(QtCore.QRect(480, 70, 311, 341))
+        self.calendarWidget.setGeometry(QtCore.QRect(470, 80, 311, 341))
         self.calendarWidget.setObjectName("calendarWidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(480, 440, 311, 91))
+        self.pushButton.setGeometry(QtCore.QRect(470, 430, 311, 101))
         font = QtGui.QFont()
-        self.calendarWidget
         font.setPointSize(24)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
@@ -442,10 +451,15 @@ class Calend(MainWindows, QMainWindow):
         font.setPointSize(14)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.listView = QtWidgets.QListWidget(self.centralwidget)
-        self.listView.setGeometry(QtCore.QRect(10, 70, 431, 461))
-        self.listView.setObjectName("listView")
-        self.listView.setFont(font)
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(10, 40, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(10, 80, 441, 451))
+        self.listWidget.setObjectName("listWidget")
         Calender.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Calender)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -464,9 +478,10 @@ class Calend(MainWindows, QMainWindow):
         self.label.setText(_translate("Calender", "Календарь"))
         self.pushButton.setText(_translate("Calender", "Новое событие "))
         self.pushButton_2.setText(_translate("Calender", "<<-- Назад"))
+        self.pushButton_3.setText(_translate("Calender", "Обновить"))
 
     def updateBar(self):
-        self.listView.clear()
+        self.listWidget.clear()
         cn = sqlite3.connect('Database.db')
         cur = cn.cursor()
         date = self.calendarWidget.selectedDate()
@@ -485,7 +500,7 @@ class Calend(MainWindows, QMainWindow):
                 '  '.join(
                 [a2, a1])
             li.append(a)
-        self.listView.addItems(li)
+        self.listWidget.addItems(li)
 
     def new_sob(self):
         a = self.calendarWidget.selectedDate()
@@ -493,14 +508,14 @@ class Calend(MainWindows, QMainWindow):
         self.newsob.show()
 
     def soblook(self):
-        id = self.listView.currentItem().text().split()[-1]
+        id = self.listWidget.currentItem().text().split()[-1]
         print(id)
 
         db = str(
             sqlite3.connect('Database.db').cursor().execute(f"SELECT text FROM sobit WHERE id = '{id}'").fetchall())
 
-        self.sobLOok = SobLook(self.listView.currentItem().text().split()[-1],
-                               ' '.join(self.listView.currentItem().text().split()[:-1]), db)
+        self.sobLOok = SobLook(self.listWidget.currentItem().text().split()[-1],
+                               ' '.join(self.listWidget.currentItem().text().split()[:-1]), db)
         self.sobLOok.show()
 
 
@@ -514,6 +529,7 @@ class SobLook(QMainWindow):
         self.textEdit.setText(self.text.split("'")[1])
         self.textEdit_2.setText(''.join(self.title))
         self.pushButton.clicked.connect(self.save)
+        self.pushButton_2.clicked.connect(self.close)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -526,18 +542,24 @@ class SobLook(QMainWindow):
         font.setPointSize(12)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
+        font = QtGui.QFont()
+        font.setPointSize(14)
         self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 31))
+        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 33))
         self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setFont(font)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(230, 0, 411, 41))
         font = QtGui.QFont()
         font.setPointSize(24)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        font = QtGui.QFont()
+        font.setPointSize(14)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(220, 70, 561, 131))
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.setFont(font)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(10, 110, 201, 91))
         font = QtGui.QFont()
@@ -583,8 +605,10 @@ class Busines(MainWindows, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.scrollArea.doubleClicked.connect(self.redact)
-
+        self.listWidget.doubleClicked.connect(self.redact)
+        self.pushButton_2.clicked.connect(self.update_l)
+        self.pushButton.clicked.connect(self.hide)
+        self.update_l()
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -596,15 +620,24 @@ class Busines(MainWindows, QMainWindow):
         font.setPointSize(28)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.scrollArea = QtWidgets.QListWidget(self.centralwidget)
-        self.scrollArea.setGeometry(QtCore.QRect(10, 60, 781, 491))
-        self.scrollArea.setObjectName("scrollArea")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(30, 60, 731, 491))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.listWidget.setFont(font)
+        self.listWidget.setObjectName("listWidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(10, 20, 121, 31))
+        self.pushButton.setGeometry(QtCore.QRect(30, 20, 101, 31))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(140, 20, 101, 31))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.pushButton_2.setFont(font)
+        self.pushButton_2.setObjectName("pushButton_2")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -613,39 +646,44 @@ class Busines(MainWindows, QMainWindow):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.pushButton.clicked.connect(self.hide)
 
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def update_l(self):
+        self.listWidget.clear()
         comboList = []
-
         cn = sqlite3.connect('Database.db')
         cur = cn.cursor()
-
         val = len(list(cur.execute('SELECT fio FROM clients')))
-
         ids = list(cur.execute('SELECT id FROM clients'))
-
         li = list(cur.execute('SELECT nameBus FROM clients'))
-
         for i in range(val):
             a = str(li[i][
-                        0]) + '                                                                                         ' + str(
+                        0]) + '                                                                   ' \
+                              '                                                                      ' \
+                              '                     ' + str(
                 ids[i][0])
             comboList.append(a)
 
-        self.scrollArea.addItems(comboList)
+        self.listWidget.addItems(comboList)
 
     def redact(self):
-        a = self.scrollArea.currentItem().text().split()[-1]
+        a = self.listWidget.currentItem().text().split()[-1]
         self.buslook = BusLook(a)
         self.buslook.show()
+
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Мои дела"))
-        self.pushButton.setText(_translate("MainWindow", "<<-- Назад"))
+        self.pushButton.setText(_translate("MainWindow", "<-- Назад"))
+        self.pushButton_2.setText(_translate("MainWindow", "Обновить"))
 
 
 class BusLook(QMainWindow):
@@ -661,6 +699,7 @@ class BusLook(QMainWindow):
         self.pushButton.clicked.connect(self.setreadFalse)
         self.pushButton_2.clicked.connect(self.save)
         self.pushButton_3.clicked.connect(self.close)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(578, 574)
@@ -818,7 +857,6 @@ class BusLook(QMainWindow):
         db.commit()
         self.close()
 
-
     def write(self):
         print(len(self.pols))
 
@@ -851,6 +889,7 @@ class newSob(QMainWindow):
         self.date = date
         self.setupUi(self)
         self.pushButton.clicked.connect(self.newsobit)
+        self.pushButton_2.clicked.connect(self.close)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -863,9 +902,12 @@ class newSob(QMainWindow):
         font.setPointSize(24)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        font = QtGui.QFont()
+        font.setPointSize(14)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(220, 70, 561, 131))
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.setFont(font)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(10, 110, 201, 91))
         font = QtGui.QFont()
@@ -878,9 +920,12 @@ class newSob(QMainWindow):
         font.setPointSize(16)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
+        font = QtGui.QFont()
+        font.setPointSize(14)
         self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 31))
+        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 33))
         self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setFont(font)
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(10, 50, 161, 21))
         font = QtGui.QFont()
