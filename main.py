@@ -1,7 +1,8 @@
 import sqlite3
 import sys
-from PyQt5.QtCore import Qt
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
 flag1 = True
@@ -117,6 +118,7 @@ class BusCreate(QMainWindow):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.close)
         self.commandLinkButton.clicked.connect(self.dialog)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 645)
@@ -261,7 +263,6 @@ class BusCreate(QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
     def dialog(self):
         global DataBaseList
         DataBaseList = [self.textBrowser, self.textBrowser_2,
@@ -352,6 +353,19 @@ class Note(MainWindows, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.updatel()
+        self.pushButton_2.clicked.connect(self.close)
+        self.pushButton_3.clicked.connect(self.updatel)
+        self.pushButton.clicked.connect(self.newnote)
+        self.listWidget.doubleClicked.connect(self.redact)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            col = sqlite3.connect('Database.db')
+            cur = col.cursor()
+            ids = self.listWidget.currentItem().text().split()[-1]
+            cur.execute(f'DELETE FROM notes WHERE id == "{ids}"')
+            col.commit()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -364,14 +378,6 @@ class Note(MainWindows, QMainWindow):
         font.setPointSize(28)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea.setGeometry(QtCore.QRect(10, 60, 601, 491))
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 599, 489))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(620, 460, 171, 91))
         font = QtGui.QFont()
@@ -382,6 +388,117 @@ class Note(MainWindows, QMainWindow):
         self.pushButton_2.setGeometry(QtCore.QRect(10, 10, 121, 31))
         font = QtGui.QFont()
         font.setPointSize(14)
+        self.pushButton_2.setFont(font)
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(620, 360, 171, 91))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(10, 60, 591, 491))
+        self.listWidget.setObjectName("listWidget")
+        self.listWidget.setFont(font)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def updatel(self):
+        self.listWidget.clear()
+        cn = sqlite3.connect('Database.db')
+        cur = cn.cursor()
+        li = []
+        val = cur.execute(
+            f"SELECT name FROM notes").fetchall()
+        val1 = cur.execute(
+            f"SELECT id FROM notes").fetchall()
+        print(val, val1)
+        for i in range(len(val)):
+            a1 = ''.join([str(j) for j in val1[i]])
+            a2 = ''.join([str(j) for j in val[i]])
+            a = '                                                                                                    ' \
+                '  '.join(
+                [a2, a1])
+            li.append(a)
+        self.listWidget.addItems(li)
+
+    def newnote(self):
+        self.newNOte = newNote()
+        self.newNOte.show()
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "Заметки"))
+        self.pushButton.setText(_translate("MainWindow", "Новая заметка"))
+        self.pushButton_2.setText(_translate("MainWindow", "<<-- Назад"))
+        self.pushButton_3.setText(_translate("MainWindow", "Обновить"))
+
+    def redact(self):
+        self.noteLOok = noteLook(self.listWidget.currentItem().text().split()[-1])
+        self.noteLOok.show()
+
+
+class noteLook(QMainWindow):
+    def __init__(self, ids):
+        super().__init__()
+        self.id = ids
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.appends)
+        self.pushButton_2.clicked.connect(self.close)
+        li = sqlite3.connect('Database.db').cursor().execute(
+            f'SELECT name, text FROM notes WHERE id == {self.id}').fetchall()[0]
+        self.textEdit_2.setText(li[0])
+        self.textEdit.setText(li[1])
+
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 248)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(10, 50, 161, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 33))
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setFont(font)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(230, 0, 411, 41))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(220, 70, 561, 131))
+        self.textEdit.setObjectName("textEdit")
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.textEdit.setFont(font)
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(10, 110, 201, 91))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(10, 10, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -395,13 +512,105 @@ class Note(MainWindows, QMainWindow):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.pushButton_2.clicked.connect(self.hide)
+
+    def appends(self):
+        cn = sqlite3.connect('Database.db')
+        cur = cn.cursor()
+        name, text = self.textEdit_2.toPlainText(), self.textEdit.toPlainText()
+        print(name, text)
+        a = f'''UPDATE notes 
+    SET name = '{name}', text = '{text}'
+    WHERE id= {self.id}
+    '''
+        print(a)
+        cur.execute(a)
+        cn.commit()
+        self.close()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Заметки"))
-        self.pushButton.setText(_translate("MainWindow", "Новая заметка"))
+        self.label_2.setText(_translate("MainWindow", "Краткое имя заметки"))
+        self.label.setText(_translate("MainWindow", "Редактирование заметки"))
+        self.pushButton.setText(_translate("MainWindow", "Сохранить"))
+        self.pushButton_2.setText(_translate("MainWindow", "<<-- Назад"))
+
+
+class newNote(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.appends)
+        self.pushButton_2.clicked.connect(self.close)
+
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 248)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(10, 50, 161, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_2.setGeometry(QtCore.QRect(10, 70, 201, 33))
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setFont(font)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(230, 0, 411, 41))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(220, 70, 561, 131))
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit.setFont(font)
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(10, 110, 201, 91))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(10, 10, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_2.setFont(font)
+        self.pushButton_2.setObjectName("pushButton_2")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def appends(self):  # !!!!!
+        cn = sqlite3.connect('Database.db')
+        cur = cn.cursor()
+        name, text = self.textEdit_2.toPlainText(), self.textEdit.toPlainText()
+        a = f"INSERT INTO notes(name, text) VALUES('{name}', '{text}')"
+        cur.execute(a)
+        cn.commit()
+        self.close()
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_2.setText(_translate("MainWindow", "Краткое имя заметки"))
+        self.label.setText(_translate("MainWindow", "Создание заметки"))
+        self.pushButton.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_2.setText(_translate("MainWindow", "<<-- Назад"))
 
 
@@ -457,9 +666,12 @@ class Calend(MainWindows, QMainWindow):
         font.setPointSize(14)
         self.pushButton_3.setFont(font)
         self.pushButton_3.setObjectName("pushButton_3")
+        font = QtGui.QFont()
+        font.setPointSize(18)
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setGeometry(QtCore.QRect(10, 80, 441, 451))
         self.listWidget.setObjectName("listWidget")
+        self.listWidget.setFont(font)
         Calender.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Calender)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -495,7 +707,7 @@ class Calend(MainWindows, QMainWindow):
 
         for i in range(len(val)):
             a1 = ''.join([str(j) for j in val1[i]])
-            a2 = ''.join(val[i])
+            a2 = ''.join([str(j) for j in val[i]])
             a = '                                                                                                    ' \
                 '  '.join(
                 [a2, a1])
@@ -609,6 +821,15 @@ class Busines(MainWindows, QMainWindow):
         self.pushButton_2.clicked.connect(self.update_l)
         self.pushButton.clicked.connect(self.hide)
         self.update_l()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            col = sqlite3.connect('Database.db')
+            cur = col.cursor()
+            ids = self.listWidget.currentItem().text().split()[-1]
+            cur.execute(f'DELETE FROM clients WHERE id == "{ids}"')
+            col.commit()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -675,8 +896,6 @@ class Busines(MainWindows, QMainWindow):
         a = self.listWidget.currentItem().text().split()[-1]
         self.buslook = BusLook(a)
         self.buslook.show()
-
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
