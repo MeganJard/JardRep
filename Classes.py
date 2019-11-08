@@ -328,7 +328,7 @@ class BusCreateDialog(QDialog):  # класс для диалога с сохр�
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def append(self):  # Сохранение в БД
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
 
         self.li.append(self.textEdit.toPlainText())
@@ -360,7 +360,7 @@ class Note(MainWindows, QMainWindow):  # Клаcс для заметок
 
     def keyPressEvent(self, event):  # Обработка нажатия del для удаления
         if event.key() == Qt.Key_Delete:
-            col = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+            col = sqlite3.connect("Database.db")
             cur = col.cursor()
             ids = self.listWidget.currentItem().text().split()[-1]
             cur.execute(f'DELETE FROM notes WHERE id == "{ids}"')
@@ -414,7 +414,7 @@ class Note(MainWindows, QMainWindow):  # Клаcс для заметок
 
     def updatel(self):  # Обновление виджета
         self.listWidget.clear()
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
         li = []
         val = cur.execute(
@@ -458,7 +458,7 @@ class noteLook(QMainWindow):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.appends)
         self.pushButton_2.clicked.connect(self.close)
-        li = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db").cursor().execute(
+        li = sqlite3.connect("Database.db").cursor().execute(
             f'SELECT name, text FROM notes WHERE id == {self.id}').fetchall()[0]
         self.textEdit_2.setText(li[0])
         self.textEdit.setText(li[1])
@@ -517,7 +517,7 @@ class noteLook(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def appends(self):  # запись в БД
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
         name, text = self.textEdit_2.toPlainText(), self.textEdit.toPlainText()
         print(name, text)
@@ -632,7 +632,7 @@ class Calend(MainWindows, QMainWindow):
     # Нажатие del для удаления
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Delete:
-            col = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+            col = sqlite3.connect("Database.db")
             cur = col.cursor()
             ids = self.listWidget.currentItem().text().split()[-1]
             print(f'DELETE FROM sobit WHERE id == "{ids}"')
@@ -701,7 +701,7 @@ class Calend(MainWindows, QMainWindow):
     # обновление виджета QListWidget
     def updateBar(self):
         self.listWidget.clear()
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
         date = self.calendarWidget.selectedDate()
         dat = '-'.join([str(date.year()), str(date.month()), str(date.day())])
@@ -814,7 +814,7 @@ class SobLook(QMainWindow):
         self.pushButton_2.setText(_translate("MainWindow", "<<-- Назад"))
 
     def save(self):  # сохранение в БД
-        a = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        a = sqlite3.connect("Database.db")
         a.cursor().execute(f'''UPDATE sobit
     SET text = '{self.textEdit.toPlainText()}', name = '{self.textEdit_2.toPlainText()}'
     WHERE id = {self.id}''')
@@ -890,7 +890,7 @@ class Busines(MainWindows, QMainWindow):
     def update_l(self):
         self.listWidget.clear()
         comboList = []
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
         val = len(list(cur.execute('SELECT fio FROM clients')))
         ids = list(cur.execute('SELECT id FROM clients'))
@@ -1068,7 +1068,7 @@ class BusLook(QMainWindow):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        db = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db").cursor()
+        db = sqlite3.connect("Database.db").cursor()
         self.var = db.execute(
             f'SELECT nameBus, fio, adess, place, inn, snils, telnumber, resogl, reorg, repkao FROM clients WHERE id = {self.id}').fetchall()[
             0]
@@ -1081,7 +1081,7 @@ class BusLook(QMainWindow):
     # сохранение в БД
     def save(self):
         li = ['nameBus', 'fio', 'adess', 'place', 'inn', 'snils', 'telnumber', 'resogl', 'reorg', 'repkao']
-        db = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        db = sqlite3.connect("Database.db")
         db1 = db.cursor()
         print()
         for i in range(len(self.pols)):
@@ -1193,7 +1193,7 @@ class newSob(QMainWindow):
 
     # Новое событие в календарь
     def newsobit(self):
-        cn = sqlite3.connect("C:/Users/byari/Desktop/LawHelperGit/Database.db")
+        cn = sqlite3.connect("Database.db")
         cur = cn.cursor()
         day = str(self.date.day())
         month = str(self.date.month())
